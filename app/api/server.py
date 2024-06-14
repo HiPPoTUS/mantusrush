@@ -4,14 +4,13 @@ import logging
 
 from flask import Flask, Response, request
 from http import HTTPStatus
-from app.simulator.main import Simulation
+from app.simulator.main import simulation
+from app.db.migrations import engine, Base
 
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 log = app.logger
-
-simulation = Simulation()
 
 
 @app.route('/ping')
@@ -59,12 +58,26 @@ def post_new_ship():
     return res
 
 
+@app.get('/way/<int:idx>')
+def get_way(idx):
+    res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
+
+
+
+    res.response = json.dumps({
+        'message': f'time set'
+    })
+    res.content_length = res.calculate_content_length()
+    return res
+    pass
+
+
 @app.put('/timestamp')
 def put_timestamp():
     res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
 
     time = float(request.form['time'])
-    simulation.time = datetime.fromtimestamp(time)
+    simulation.set_time(time)
 
     res.response = json.dumps({
         'message': f'time set'
