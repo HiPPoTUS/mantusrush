@@ -1,6 +1,5 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DECIMAL, TIMESTAMP, ForeignKey, text
+from sqlalchemy import create_engine, Column, Integer, String, DECIMAL, TIMESTAMP, ForeignKey, text
 from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import CreateSchema
 
 # Параметры подключения к базе данных
@@ -10,6 +9,7 @@ DB_URL = "postgresql://postgres:159951@:5432/ship_schema"
 engine = create_engine(DB_URL)
 Base = declarative_base()
 
+
 # Определение моделей
 class Port(Base):
     __tablename__ = 'ports'
@@ -18,15 +18,17 @@ class Port(Base):
     name = Column(String(100), nullable=False)
     coordinates = Column(String(100), nullable=False)
 
+
 class Ship(Base):
     __tablename__ = 'ships'
     __table_args__ = {'schema': 'ship_schema'}
     ship_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), nullable=False)
+    name = Column(String(100), unique=True, nullable=False)
     type = Column(String(50))
     description = Column(String)
     max_speed = Column(DECIMAL(5, 2), nullable=False)
     ice_class = Column(Integer, nullable=False)
+
 
 class Route(Base):
     __tablename__ = 'routes'
@@ -36,7 +38,8 @@ class Route(Base):
     start_point = Column(Integer, ForeignKey('ship_schema.ports.port_id'), nullable=False)
     end_point = Column(Integer, ForeignKey('ship_schema.ports.port_id'), nullable=False)
     start_time = Column(TIMESTAMP, nullable=False)
-    arrival_time = Column(TIMESTAMP, nullable=False)
+    arrival_time = Column(TIMESTAMP, nullable=True)
+
 
 class CurrentRoute(Base):
     __tablename__ = 'current_routes'
@@ -46,6 +49,7 @@ class CurrentRoute(Base):
     waypoint = Column(String(100), nullable=False)
     waypoint_time = Column(TIMESTAMP, nullable=False)
 
+
 class PredictedRoute(Base):
     __tablename__ = 'predicted_routes'
     __table_args__ = {'schema': 'ship_schema'}
@@ -53,6 +57,7 @@ class PredictedRoute(Base):
     route_id = Column(Integer, ForeignKey('ship_schema.routes.route_id'), nullable=False)
     waypoint = Column(String(100), nullable=False)
     waypoint_time = Column(TIMESTAMP, nullable=False)
+
 
 def create_schema_if_not_exists():
     with engine.connect() as connection:
