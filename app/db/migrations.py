@@ -3,7 +3,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import CreateSchema
 
 # Параметры подключения к базе данных
-DB_URL = "postgresql://postgres:159951@:5432/ship_schema"
+DB_URL = "postgresql://postgres:159951@0.0.0.0:5432/ship_schema"
 
 # Создание подключения к базе данных
 engine = create_engine(DB_URL)

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from app.db.utils import to_common
 import data_parser.main as parser
-from migrations import Ship, Port, engine, Route
+from app.db.migrations import Ship, Port, engine, Route
 
 
 def feed_ships():

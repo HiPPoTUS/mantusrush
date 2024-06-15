@@ -1,7 +1,9 @@
+from datetime import datetime
+
 import pandas as pd
 from pathlib import Path
 
-path = 'D:\\pycharm\\mantus-rush\\raw_data'
+path = '/home/vladimir/Desktop/Tmp/mantusrush/raw_data'
 path = Path(path)
 
 
@@ -56,11 +58,17 @@ def integr_velocity() -> (pd.DataFrame, pd.DataFrame, list[pd.DataFrame]):
 
     xl = pd.ExcelFile(iv_path)
     dfs = []
-    for sheet_name in xl.sheet_names[2:]:
+    dates = []
+
+    date_format = '%d-%b-%Y'
+
+    for sheet_name in xl.sheet_names[2:4]:
         df = pd.read_excel(iv_path, sheet_name=sheet_name, header=None, nrows=269,
                            skiprows=0)
-        print(sheet_name)
+        print(datetime.strptime(sheet_name, date_format))
+        date = datetime.strptime(sheet_name, date_format).timestamp()
         dfs.append(df)
+        dates.append(date)
 
-    return lon, lat, dfs
+    return lon, lat, dfs, dates
 
