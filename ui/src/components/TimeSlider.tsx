@@ -1,35 +1,36 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Flex, Slider, SliderSingleProps, Statistic, Tooltip} from 'antd';
+import React, {useState} from 'react';
+import {Button, Flex, Slider, Statistic, Tooltip} from 'antd';
 import { FastBackwardOutlined, FastForwardOutlined, StepBackwardOutlined, StepForwardOutlined } from '@ant-design/icons';
 import {putTimestamp} from "../api";
-import moment from 'moment';
+import dayjs from "dayjs";
+
+const startTimestamp = 1583182800.0
 
 const TimeSlider = () => {
+    const startDate = React.useMemo(() => dayjs.unix(startTimestamp), []);
+    const endDate = React.useMemo(() => startDate.add(3, 'month').add(-1, 'day'), []);
+    const dateCount = React.useMemo(() => endDate.diff(startDate, 'day'), [startDate]);
+
     const [value, setValue] = useState(0);
+
     const updateValue = (value: number, diff: number): number => {
         const newValue = value + diff
         if (newValue < 0) {
             return 0;
-        } else if (newValue > 100) {
-            return 100
+        } else if (newValue > dateCount) {
+            return dateCount
         } else {
             return newValue
         }
     }
-    useEffect(() => {
-        if (value < 0) {
-            setValue(0);
-        } else if (value > 100) {
-            setValue(100)
-        }
-    }, [value]);
     const handleChange = (newValue: number) => {
         setValue(newValue);
         sendRequest(newValue);
     };
 
     const sendRequest = (newValue: number) => {
-        putTimestamp(newValue)
+        const timestamp = startDate.add(newValue, 'day').unix()
+        putTimestamp(timestamp)
             .then(data => console.log(data))
             .catch(error => console.log(error))
     };
@@ -37,10 +38,14 @@ const TimeSlider = () => {
     return (
         <Flex wrap gap="small" style={{ width: '100%' }} justify="center">
             <Slider
-                min={0} max={100} step={1}
+                min={0} max={dateCount} step={1}
                 value={value}
                 onChange={handleChange}
                 style={{width:'50%'}}
+                tooltip={{
+                    formatter: (nextValue) =>
+                        startDate.add(nextValue || 0, 'day').format('YYYY-MM-DD'),
+                }}
             />
             <Tooltip title="Назад на неделю">
                 <Button shape="circle" icon={<FastBackwardOutlined/>} onClick={() => {
@@ -52,8 +57,8 @@ const TimeSlider = () => {
                     setValue((prev) => updateValue(prev, -1));
                 }}/>
             </Tooltip>
-            <Flex style={{width:'40px'}}>
-                <Statistic value={value} style={{margin: "auto" }} />
+            <Flex style={{}}>
+                <Statistic value={startDate.add(value || 0, 'day').format('YYYY-MM-DD')} style={{margin: "auto" }} />
             </Flex>
             <Tooltip title="Вперед на день">
                 <Button type="primary" shape="circle" icon={<StepForwardOutlined/>}  onClick={() => {

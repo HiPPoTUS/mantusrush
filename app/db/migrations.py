@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, DECIMAL, TIMESTAMP, ForeignKey, text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import CreateSchema
+from sqlalchemy.sql import func
 
 from typing import Optional, List, Any, TypeVar, Callable
 

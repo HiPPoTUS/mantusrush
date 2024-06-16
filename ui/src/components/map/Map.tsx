@@ -94,7 +94,6 @@ const Map: React.FC = () => {
             }
             {
                 routesStore.map(route =>
-                    // <BaseRoute route={route} />
                     <GeodesicLine route={route} />
                 )
             }

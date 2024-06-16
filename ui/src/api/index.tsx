@@ -10,14 +10,17 @@ export const updateRoutes = async () => {
 };
 
 export const addShip = async (ship: string) => {
-    const response = await axios.post(`${API_URL}/ships`, ship);
+    const response = await axios.post<Ship>(`${API_URL}/new_ship`, ship, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
     return response.data;
 };
 
 export const addRoute = async (route: string) => {
-    const response = await axios.post(`${API_URL}/new_route`, route, {
+    const response = await axios.post<SimplifyRoute>(`${API_URL}/new_route`, route, {
         headers: {
-            // Overwrite Axios's automatically set Content-Type
             'Content-Type': 'application/json'
         }
     });
@@ -55,6 +58,6 @@ export const getPredictedRoute = async () => {
 };
 
 export const putTimestamp = async (timestamp: number) => {
-    const response = await axios.put(`${API_URL}/timestamp/` + timestamp.toString());
+    const response = await axios.put(`${API_URL}/timestamp/` + timestamp);
     return response.data;
 };

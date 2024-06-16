@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import {AutoComplete, Button, DatePicker, DatePickerProps, Form, Input, Spin} from 'antd';
 import {date} from "yup";
 import {RouteRequest, ShipRequest} from "../../api/models";
-import { useSelector } from 'react-redux';
-import {RootState} from "../../store";
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from "../../store";
 import {addRoute, addShip} from "../../api";
-import AddRouteModal from "../modals/LoadingModal";
-import LoadingModal from "../modals/LoadingModal";
-import dayjs from 'dayjs';
-import {delay} from "@reduxjs/toolkit/dist/utils";
+import {addShip as addShipStore} from "../../store/shipsSlice";
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -30,6 +27,7 @@ const getPanelValue = (searchText: string, searchList: string[]) => {
 }
 
 const AddShipForm: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
     const ships = useSelector((state: RootState) => state.ships);
 
     const arcs = ["3", "4", "5", "6", "7", "9"].map((arcClass) => "Arc " + arcClass)
@@ -72,11 +70,14 @@ const AddShipForm: React.FC = () => {
         }
         const jsonRequest =JSON.stringify(request)
         console.log(jsonRequest)
-        return;
         addShip(jsonRequest)
-            .then()
-            .catch(err => console.log(err))
-            .finally()
+            .then((data) => {
+                dispatch(addShipStore(data))
+            })
+            .catch(err => alert(err))
+            .finally(() => {
+                setIsModalOpen(false)
+            })
         form.resetFields(["ship_name", "arc", "velocity"])
     }
 
@@ -90,7 +91,6 @@ const AddShipForm: React.FC = () => {
             }}
             clearOnDestroy
         >
-            {/*<LoadingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />*/}
             <Form.Item<FieldType>
                 name="ship_name"
                 label="Название корабля"

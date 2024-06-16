@@ -44,15 +44,17 @@ def get_port(port_idx) -> Type[Port]:
     return ports
 
 
-def new_ship(name: str, max_speed: float, ice_class: int) -> bool:
+def new_ship(name: str, max_speed: float, ice_class: int) -> int:
     ship = Ship(name=name, max_speed=max_speed, ice_class=ice_class)
+    print(ship)
     session.add(ship)
     try:
         session.commit()
-        return True
+        return ship.ship_id
     except SQLAlchemyError as e:
+        print(e)
         session.rollback()
-        return False
+        return -1
     finally:
         session.close()
 
@@ -80,15 +82,18 @@ def get_routes() -> list[Type[Route]]:
     return routes
 
 
-def new_route(ship_idx: int, start_point_idx: int, end_point_idx: int, start_time: datetime) -> bool:
+def new_route(ship_idx: int, start_point_idx: int, end_point_idx: int, start_time: datetime) -> int:
     route = Route(ship_id=ship_idx, start_point=start_point_idx, end_point=end_point_idx, start_time=start_time)
+    print(route)
+
     session.add(route)
     try:
         session.commit()
-        return True
+        return route.route_id
     except SQLAlchemyError as e:
+        print(e)
         session.rollback()
-        return False
+        return -1
     finally:
         session.close()
 

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import {AutoComplete, Button, DatePicker, DatePickerProps, Form, Input} from 'antd';
+import {AutoComplete, Button, DatePicker, DatePickerProps, Form, Input, Spin} from 'antd';
 import {date} from "yup";
 import {RouteRequest} from "../../api/models";
-import { useSelector } from 'react-redux';
-import {RootState} from "../../store";
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from "../../store";
 import {addRoute} from "../../api";
 import AddRouteModal from "../modals/LoadingModal";
 import LoadingModal from "../modals/LoadingModal";
 import dayjs from 'dayjs';
+import {addRoute as addRouteStore} from "../../store/routesSlice";
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -30,6 +31,7 @@ const getPanelValue = (searchText: string, searchList: string[]) => {
 }
 
 const AddRouteForm: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
     const ports = useSelector((state: RootState) => state.ports);
     const ships = useSelector((state: RootState) => state.ships);
 
@@ -82,11 +84,14 @@ const AddRouteForm: React.FC = () => {
         const jsonRequest =JSON.stringify(request)
         console.log(jsonRequest)
 
-        return;
         addRoute(jsonRequest)
-            .then()
-            .catch(err => console.log(err))
-            .finally()
+            .then((data) => {
+                dispatch(addRouteStore(data))
+            })
+            .catch(err => alert(err))
+            .finally(() => {
+                setIsModalOpen(false)
+            })
         form.resetFields(["ship_name", "end_point", "start_point", "date"])
     }
     return (
@@ -95,11 +100,9 @@ const AddRouteForm: React.FC = () => {
             form={form}
             onFinish={() => {
                 onFinish()
-                setIsModalOpen(false)
             }}
             clearOnDestroy
         >
-            <LoadingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
             <Form.Item<FieldType>
                 name="ship_name"
                 label="Название корабля"
@@ -150,7 +153,10 @@ const AddRouteForm: React.FC = () => {
             </Form.Item>
 
             <Form.Item >
-                <Button type="primary" htmlType="submit">Добавить</Button>
+                <Button type="primary" htmlType="submit">
+                    Добавить
+                </Button>
+                { isModalOpen && <Spin style={{marginLeft: "10px"}} size="default" /> }
             </Form.Item>
         </Form>
 );
