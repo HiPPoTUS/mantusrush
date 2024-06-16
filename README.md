@@ -26,6 +26,7 @@
 git clone https://github.com/HiPPoTUS/mantusrush.git
 cd mantusrush
 docker compose up
+```
 
 После чего будет доступен сервис по адресу http://localhost:3000/
 
