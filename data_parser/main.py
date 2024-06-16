@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 from pathlib import Path
 
-path = '/home/vladimir/Desktop/Tmp/mantusrush/raw_data'
+path = 'D:\\pycharm\\mantus-rush\\raw_data'
 path = Path(path)
 
 
