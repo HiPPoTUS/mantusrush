@@ -1,8 +1,9 @@
 import axios from 'axios';
-import {Route, Ship, CurrentRoute, PredictedRoute, Port, SimplifyRoute, RouteRequest} from "./models";
+import {Route, Ship, CurrentRoute, PredictedRoute, Port, SimplifyRoute} from "./models";
 
-const API_URL = 'http://127.0.0.1:5000';
-
+const API_URL = 'backend:5000';
+// const API_URL = process.env.API_URL
+// console.log(API_URL)
 
 export const updateRoutes = async () => {
     const response = await axios.post<string>(`${API_URL}/update`);
@@ -28,6 +29,8 @@ export const addRoute = async (route: string) => {
 };
 
 export const getPorts = async () => {
+    const url = process.env.API_URL
+    console.log(url)
     const response = await axios.get<Port[]>(`${API_URL}/ports`);
     return response.data;
 };

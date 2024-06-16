@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import {AutoComplete, Button, DatePicker, DatePickerProps, Form, Input, Spin} from 'antd';
-import {date} from "yup";
+import {AutoComplete, Button, DatePicker, Form, Spin} from 'antd';
 import {RouteRequest} from "../../api/models";
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from "../../store";
 import {addRoute} from "../../api";
-import AddRouteModal from "../modals/LoadingModal";
-import LoadingModal from "../modals/LoadingModal";
 import dayjs from 'dayjs';
 import {addRoute as addRouteStore} from "../../store/routesSlice";
 

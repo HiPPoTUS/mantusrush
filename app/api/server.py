@@ -24,6 +24,11 @@ def ping():
     return 'pong'
 
 
+@app.route('/health')
+def health():
+    return "OK", 200
+
+
 @app.post('/update')
 def update():
     """

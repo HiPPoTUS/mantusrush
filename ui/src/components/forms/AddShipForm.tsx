@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import {AutoComplete, Button, DatePicker, DatePickerProps, Form, Input, Spin} from 'antd';
-import {date} from "yup";
-import {RouteRequest, ShipRequest} from "../../api/models";
+import {AutoComplete, Button, Form, Input, Spin} from 'antd';
+import {ShipRequest} from "../../api/models";
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from "../../store";
-import {addRoute, addShip} from "../../api";
+import {addShip} from "../../api";
 import {addShip as addShipStore} from "../../store/shipsSlice";
 
 const dateFormat = 'YYYY-MM-DD';

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {App, Button, notification, Spin, Tooltip} from "antd";
+import {App, Button, Tooltip} from "antd";
 import {updateRoutes} from "../api";
-import {CalculatorOutlined} from '@ant-design/icons';
 import {FaCalculator} from "react-icons/fa6";
 
 

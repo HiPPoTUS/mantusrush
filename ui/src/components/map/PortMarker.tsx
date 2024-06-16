@@ -2,7 +2,6 @@ import {Marker, Popup} from "react-leaflet";
 import React from "react";
 import {Port} from "../../api/models";
 import L from "leaflet";
-import Map from "./Map";
 
 // Установите кастомный икон для маркера
 const customIcon = new L.Icon({

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Flex, Slider, Statistic, Tooltip} from 'antd';
+import {Button, Flex, Slider, SliderSingleProps, Statistic, Tooltip} from 'antd';
 import { FastBackwardOutlined, FastForwardOutlined, StepBackwardOutlined, StepForwardOutlined } from '@ant-design/icons';
 import {putTimestamp} from "../api";
 import dayjs from "dayjs";
@@ -7,9 +7,15 @@ import dayjs from "dayjs";
 const startTimestamp = 1583182800.0
 
 const TimeSlider = () => {
+
     const startDate = React.useMemo(() => dayjs.unix(startTimestamp), []);
     const endDate = React.useMemo(() => startDate.add(3, 'month').add(-1, 'day'), []);
     const dateCount = React.useMemo(() => endDate.diff(startDate, 'day'), [startDate]);
+
+    const marks: SliderSingleProps['marks'] = {};
+    for (let i = 0; i <= dateCount; i = i + 7) {
+        marks[i] = startDate.add(i, 'day').format('MM-DD');
+    }
 
     const [value, setValue] = useState(0);
 
@@ -41,11 +47,12 @@ const TimeSlider = () => {
                 min={0} max={dateCount} step={1}
                 value={value}
                 onChange={handleChange}
-                style={{width:'50%'}}
+                style={{width:'50%', marginTop: "2px", marginRight: "15px"}}
                 tooltip={{
                     formatter: (nextValue) =>
                         startDate.add(nextValue || 0, 'day').format('YYYY-MM-DD'),
                 }}
+                marks={marks}
             />
             <Tooltip title="Назад на неделю">
                 <Button shape="circle" icon={<FastBackwardOutlined/>} onClick={() => {
@@ -58,7 +65,7 @@ const TimeSlider = () => {
                 }}/>
             </Tooltip>
             <Flex style={{}}>
-                <Statistic value={startDate.add(value || 0, 'day').format('YYYY-MM-DD')} style={{margin: "auto" }} />
+                <Statistic value={startDate.add(value || 0, 'day').format('YYYY-MM-DD')} style={{marginTop: "-2px" }} />
             </Flex>
             <Tooltip title="Вперед на день">
                 <Button type="primary" shape="circle" icon={<StepForwardOutlined/>}  onClick={() => {

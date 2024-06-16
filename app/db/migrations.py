@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import os
 from sqlalchemy import create_engine, Column, Integer, String, DECIMAL, TIMESTAMP, ForeignKey, text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import CreateSchema
@@ -51,8 +51,8 @@ def from_bool(x: Any) -> bool:
 
 
 # Параметры подключения к базе данных
-DB_URL = "postgresql://postgres:159951@0.0.0.0:5432/ship_schema"
-
+DB_URL = os.environ.get("DB_URL", "postgresql://postgres:159951@db:5433/ship_schema")
+print(DB_URL)
 # Создание подключения к базе данных
 engine = create_engine(DB_URL)
 Base = declarative_base()

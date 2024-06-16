@@ -1,10 +1,9 @@
-import {Marker, Polyline, Popup, useMap} from "react-leaflet";
+import {Polyline, useMap} from "react-leaflet";
 import React, {useEffect, useRef} from "react";
-import {Port, Route, SimplifyRoute} from "../../api/models";
+import {SimplifyRoute} from "../../api/models";
 import L, {LatLngExpression} from "leaflet";
 import './BaseRoute.css';
 import 'leaflet.geodesic';
-// import { GeodesicLine } from 'react-leaflet-geodesic';
 
 
 type Props = {

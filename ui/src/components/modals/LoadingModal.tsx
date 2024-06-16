@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import {Button, Modal, Spin} from 'antd';
-import AddRouteForm from "../forms/AddRouteForm";
+import React from 'react';
+import {Modal, Spin} from 'antd';
 
 type Props = {
     isModalOpen: boolean;
