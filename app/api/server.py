@@ -1,13 +1,19 @@
 import json
 import logging
+import time
+from datetime import datetime
 
 from flask import Flask, Response, request
+from flask_cors import CORS
 from http import HTTPStatus
+
+from app.db.migrations import SimlifyRoute
 from app.simulator.main import simulation
 import app.db.commands as dbc
 
 
 app = Flask(__name__)
+CORS(app)
 app.logger.setLevel(logging.INFO)
 log = app.logger
 
@@ -17,7 +23,7 @@ def ping():
     return 'pong'
 
 
-@app.route('/update')
+@app.post('/update')
 def update():
     """
     При вызове метода сервер пойдёт обновлять состояние в сервис за временной меткой, льдом, новыми кораблями,
@@ -30,6 +36,7 @@ def update():
     res.response = json.dumps({
         'message': f'state successfully updated'
     })
+    time.sleep(3)
     res.content_length = res.calculate_content_length()
     return res
 
@@ -67,9 +74,7 @@ def get_route(way_type, ship_id):
     res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
 
     ship = dbc.get_ship(ship_id)
-    print(ship.ship_id)
     route = dbc.get_route(-1, ship.ship_id)
-    print(route)
     if way_type == "current":
         way = dbc.get_current_route(route.route_id)
         way = {"current": way.tolist()}
@@ -86,14 +91,88 @@ def get_route(way_type, ship_id):
     return res
 
 
+@app.get('/routes')
+def get_routes():
+    res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
+
+    routes = dbc.get_routes()
+    routes = [route.to_dict() for route in routes]
+
+    res.response = json.dumps(routes)
+    res.content_length = res.calculate_content_length()
+    return res
+
+
+@app.get('/routes/simplify')
+def get_routes_simple():
+    res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
+
+    routes = dbc.get_routes()
+    simplify_routes = list()
+    for route in routes:
+        if route.end_point == 47:
+            continue
+        start = dbc.get_port(route.start_point).coordinates
+        end = dbc.get_port(route.end_point).coordinates
+        route_s = [start.split(' '), end.split(' ')]
+        simplify_routes.append(SimlifyRoute(route.route_id, route.ship_id, route_s, route.start_time))
+    simplify_routes = [route.to_dict() for route in simplify_routes]
+
+    res.response = json.dumps(simplify_routes)
+    res.content_length = res.calculate_content_length()
+    return res
+
+
+@app.get('/ship/<int:ship_id>')
+def get_ship(ship_id):
+    res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
+
+    ship = dbc.get_ship(ship_id)
+
+    res.response = json.dumps(ship.to_dict())
+    res.content_length = res.calculate_content_length()
+    return res
+
+
+@app.get('/ships')
+def get_ships():
+    res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
+
+    ships = dbc.get_ships()
+    ships = [ship.to_dict() for ship in ships]
+
+    res.response = json.dumps(ships)
+    res.content_length = res.calculate_content_length()
+    return res
+
+
+@app.get('/ports')
+def get_ports():
+    res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
+
+    ports = dbc.get_ports()
+    ports_r = list()
+    for port in ports:
+        if port.port_id == 47:
+            continue
+        ports_r.append(port.to_dict())
+    # ports = [port.to_dict() for port in ports]
+
+    res.response = json.dumps(ports_r)
+    res.content_length = res.calculate_content_length()
+    return res
+
+
 @app.post('/new_route')
 def post_new_route():
     res = Response(response="None", status=HTTPStatus.OK, mimetype="application/json")
-
-    ship_idx = int(request.form['ship_idx'])
-    start_point_idx = int(request.form['start_point_idx'])
-    end_point_idx = int(request.form['end_point_idx'])
-    start_time = float(request.form['end_point_idx'])
+    data = request.get_json()
+    print(data)
+    data = json.loads(data)
+    ship_idx = data.get("ship_id")
+    start_point_idx = data.get("start_point_idx")
+    end_point_idx = data.get("end_point_idx")
+    start_time = datetime.fromisoformat(data.get("start_time"))
 
     result = dbc.new_route(ship_idx, start_point_idx, end_point_idx, start_time)
 
@@ -128,4 +207,4 @@ def put_timestamp(time):
 
 
 def start():
-    app.run(debug=True)
+    app.run(debug=False)

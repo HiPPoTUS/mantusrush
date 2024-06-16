@@ -1,0 +1,9 @@
+.moving-line {
+    animation: move 1s linear infinite;
+}
+
+@keyframes move {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
