@@ -1,0 +1,14 @@
+FROM node:21.7.2
+LABEL authors="mantus-rush"
+
+WORKDIR /app
+
+COPY ui .
+
+WORKDIR ./ui
+
+RUN npm install
+
+EXPOSE 3000:3000
+
+CMD npm run start

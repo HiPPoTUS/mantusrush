@@ -1,0 +1,25 @@
+version: "3"
+
+
+services:
+
+  postgres:
+    image: postgres:16.1-alpine3.19
+    container_name: postgres_main
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: 159951
+      POSTGRES_USER: postgres
+      POSTGRES_DB: ship_schema
+
+
+volumes:
+
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /api/assets/logs/postgres
+      o: bind

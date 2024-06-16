@@ -1,0 +1,22 @@
+FROM python:3.10-slim
+LABEL authors="mantus-rush"
+
+WORKDIR /server
+
+RUN apt-get update && apt-get install -y libpq-dev gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y curl
+
+COPY requirements.txt requirements.txt
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./app ./app
+COPY ./raw_data ./raw_data
+COPY ./data_parser ./data_parser
+COPY main.py .
+
+EXPOSE 5000:5000
+
+CMD ["python", "main.py"]

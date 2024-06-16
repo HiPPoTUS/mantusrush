@@ -1,26 +1,51 @@
-version: "3"
-
+version: '3'
 
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: postgresql://postgres:159951@db:5432/ship_schema
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
 
-  postgres:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: backend:5000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  db:
     image: postgres:16.1-alpine3.19
-    container_name: postgres_main
     restart: always
     ports:
       - "5432:5432"
-#    network_mode: "host"
     environment:
       POSTGRES_PASSWORD: 159951
       POSTGRES_USER: postgres
       POSTGRES_DB: ship_schema
-
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d ship_schema" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - data_postgres:/var/lib/postgresql/data
 
 volumes:
-
-  postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /api/assets/logs/postgres
-      o: bind
+  data_postgres:

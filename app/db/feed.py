@@ -22,7 +22,6 @@ def feed_ships():
         iceClass = row['Ледовый класс'].replace('Arc ', '')
         iceClass = int(iceClass) if iceClass != 'Нет' else 0
         ship = Ship(
-            ship_id=len(names),
             name=row['Название судна'],
             type='tmp',
             description='tmp',
@@ -34,7 +33,6 @@ def feed_ships():
         names.add(row['Название судна'])
     for index, row in df_breaker.iterrows():
         ship = Ship(
-            ship_id=len(names),
             name=row['Наименование'],
             type='tmp',
             description='tmp',
@@ -67,14 +65,12 @@ def feed_ports():
     ports = []
     for index, row in df.iterrows():
         port = Port(
-            port_id=index,
             name=to_common(row['point_name']),
             coordinates=f'{row["latitude"]} {row["longitude"]}'
         )
         ports.append(port)
 
     port = Port(
-        port_id=len(ports),
         name=to_common("any"),
         coordinates='0 0'
     )
@@ -112,7 +108,6 @@ def feed_route():
             Port.name.like(f'%{to_common(row["Пункт окончания плавания"])}%')
         ).first().port_id
         route = Route(
-            route_id=index,
             ship_id=ship_id,
             start_point=start_point,
             end_point=end_point,
@@ -129,7 +124,6 @@ def feed_route():
             Port.name == 'any'
         ).first().port_id
         route = Route(
-            route_id=len(routes),
             ship_id=ship_id,
             start_point=start_point,
             end_point=end_point,
