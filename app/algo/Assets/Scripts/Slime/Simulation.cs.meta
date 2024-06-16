@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 0173053465a956443813261665491110
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - compute: {instanceID: 0}
+  - drawAgentsCS: {instanceID: 0}
+  - settings: {fileID: 11400000, guid: b4bd879e1f386d84eaf103b21d3c832b, type: 2}
+  - trailMap: {instanceID: 0}
+  - diffusedTrailMap: {instanceID: 0}
+  - displayTexture: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
